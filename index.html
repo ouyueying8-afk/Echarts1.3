@@ -1,0 +1,188 @@
+<iframe 
+  srcdoc='
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KOL文本叙事特征分析</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Microsoft YaHei", Arial, sans-serif; background: #fff; }
+    #chart { width: 100%; height: 100vh; min-height: 600px; }
+    @media (max-width: 768px) {
+      #chart { height: 500px; min-height: 500px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="chart"></div>
+  <script>
+    const chartDom = document.getElementById("chart");
+    const myChart = echarts.init(chartDom);
+    
+    const option = {
+      title: {
+        text: "KOL文本叙事特征分析",
+        left: "center",
+        textStyle: {
+          fontSize: 18,
+          fontWeight: "bold",
+          color: "#5a5a5a"
+        }
+      },
+      legend: {
+        data: ["kol1 少少甜", "kol2 Miss Blair", "kol3 Melpomene"],
+        bottom: 20,
+        left: "center",
+        itemWidth: 20,
+        itemHeight: 12,
+        textStyle: {
+          fontSize: 13,
+          color: "#666"
+        }
+      },
+      radar: {
+        shape: "circle",
+        splitNumber: 4,
+        center: ["50%", "50%"],
+        radius: "70%",
+        name: {
+          textStyle: {
+            color: "#555",
+            fontSize: 12,
+            fontWeight: "normal",
+            padding: [5, 0]
+          }
+        },
+        axisLine: {
+          lineStyle: {
+            color: "#ff94a8",
+            width: 1,
+            opacity: 0.3
+          }
+        },
+        splitLine: {
+          lineStyle: {
+            color: "#ff94a8",
+            width: 1,
+            opacity: 0.2
+          }
+        },
+        splitArea: {
+          show: true,
+          areaStyle: {
+            color: ["rgba(255, 148, 168, 0.05)", "rgba(255, 148, 168, 0.08)", "rgba(255, 148, 168, 0.12)", "rgba(255, 148, 168, 0.16)"],
+            opacity: 1
+          }
+        },
+        indicator: [
+          { name: "情感强度", max: 5 },
+          { name: "归因明确度", max: 5 },
+          { name: "细节密度", max: 5 },
+          { name: "叙事个人化", max: 5 },
+          { name: "解决方案感", max: 5 },
+          { name: "恐惧激发度", max: 5 }
+        ]
+      },
+      series: [
+        {
+          name: "KOL特征对比",
+          type: "radar",
+          symbol: "circle",
+          symbolSize: 8,
+          lineStyle: {
+            width: 2.5,
+            type: "solid"
+          },
+          label: {
+            show: true,
+            formatter: function(params) {
+              return params.value;
+            },
+            fontSize: 10,
+            color: "#fff",
+            fontWeight: "bold"
+          },
+          emphasis: {
+            lineStyle: {
+              width: 3.5
+            },
+            areaStyle: {
+              opacity: 0.5
+            }
+          },
+          data: [
+            {
+              value: [2, 2, 4, 5, 5, 1],
+              name: "kol1 少少甜",
+              itemStyle: { color: "#a8d8ea" },
+              lineStyle: { color: "#4a9cdb", width: 2.5 },
+              areaStyle: { color: "rgba(168, 216, 234, 0.5)" }
+            },
+            {
+              value: [3, 1, 4, 3, 4, 2],
+              name: "kol2 Miss Blair",
+              itemStyle: { color: "#e6a8de" },
+              lineStyle: { color: "#b86eb3", width: 2.5 },
+              areaStyle: { color: "rgba(230, 168, 222, 0.5)" }
+            },
+            {
+              value: [5, 5, 5, 5, 1, 5],
+              name: "kol3 Melpomene",
+              itemStyle: { color: "#a8e6cf" },
+              lineStyle: { color: "#57b894", width: 2.5 },
+              areaStyle: { color: "rgba(168, 230, 207, 0.5)" }
+            }
+          ]
+        }
+      ],
+      tooltip: {
+        trigger: "item",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "#ff94a8",
+        borderWidth: 1,
+        padding: [12, 15],
+        textStyle: {
+          color: "#555",
+          fontSize: 12
+        },
+        formatter: function(params) {
+          const dimensions = ["情感强度", "归因明确度", "细节密度", "叙事个人化", "解决方案感", "恐惧激发度"];
+          let result = `<div style="font-weight:bold;margin-bottom:10px;font-size:14px;padding-bottom:5px;border-bottom:1px solid #eee;color:#${params.name === "kol1 少少甜" ? "4a9cdb" : params.name === "kol2 Miss Blair" ? "b86eb3" : "57b894"};">${params.name}</div>`;
+          params.value.forEach((score, index) => {
+            let starsHtml = "";
+            for(let i = 1; i <= 5; i++) {
+              if(i <= score) {
+                starsHtml += '<span style="color:#ff94a8;margin-right:2px;">★</span>';
+              } else {
+                starsHtml += '<span style="color:#ddd;margin-right:2px;">☆</span>';
+              }
+            }
+            result += `<div style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+              <span style="flex:0 0 110px;">${dimensions[index]}</span>
+              <span style="font-weight:bold;margin-right:10px;color:#${params.name === "kol1 少少甜" ? "4a9cdb" : params.name === "kol2 Miss Blair" ? "b86eb3" : "57b894"};">${score}分</span>
+              <span style="letter-spacing:1px;">${starsHtml}</span>
+            </div>`;
+          });
+          return result;
+        }
+      }
+    };
+    
+    myChart.setOption(option);
+    
+    // 响应式调整
+    window.addEventListener("resize", function() {
+      myChart.resize();
+    });
+  </script>
+</body>
+</html>
+  '
+  width="100%" 
+  height="600px" 
+  frameborder="0"
+  style="border: 1px solid #eee; border-radius: 8px; overflow: hidden;"
+></iframe>
